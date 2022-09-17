@@ -11,18 +11,23 @@ const range = function* (start, end, step) {
     else if (step === undefined) {
         [start, end, step] = [start, end, 1];
     }
-    while (start < end) {
+    const isGrowing = end > start;
+    if ((isGrowing && start + step < start) ||
+        (!isGrowing && start + step > start)) {
+        return [];
+    }
+    while (isGrowing ? start < end : start > end) {
         yield start;
         start += step;
     }
 };
 const WIDTH = 1000;
 const HEIGHT = 1000;
-const CIRCLE_RADIUS = 350;
-const ICON_RADIUS = 10;
+const CIRCLE_RADIUS = 300;
+const ICON_RADIUS = 12;
 // In percentage of CIRCLE_RADIUS
 const CONTROL_POINT = 0.1;
-const LABEL_OFFSET = 30;
+const LABEL_OFFSET = 25;
 const ICON_CONFIG = {
     cx: 0,
     cy: 0,
@@ -32,9 +37,9 @@ const ICON_CONFIG = {
     fill: 'hsl(210, 100%, 70%)',
 };
 const ICON_LABEL_CONFIG = {
-    'font-size': 20,
+    'font-size': 16,
     y: '0',
-    dy: '6',
+    dy: '5',
 };
 const PATH_CONFIG = {
     'stroke-width': 1,
@@ -45,7 +50,7 @@ const getPoint = (index, count, radius) => [
     Math.cos((index / count) * 2 * Math.PI) * radius,
     Math.sin((index / count) * 2 * Math.PI) * radius,
 ];
-const toPair = (point) => point.map((n) => n.toFixed(2)).join(', ');
+const toPair = (point) => point.map((n) => n.toFixed(1)).join(', ');
 const createPath = (startIndex, endIndex, count) => {
     const startPoint = getPoint(startIndex, count, CIRCLE_RADIUS - ICON_RADIUS);
     const startControlPoint = getPoint(startIndex, count, CIRCLE_RADIUS * CONTROL_POINT);
@@ -100,7 +105,7 @@ const createView = () => {
     canvas.appendChild(circle);
     const count = 51;
     for (const i of range(count)) {
-        const icon = createIcon(i, count, getRandomName());
+        const icon = createIcon(i, count, `${getRandomName()} ${getRandomName()}`);
         canvas.appendChild(icon);
     }
     for (const i of range(3, count, 3)) {
@@ -122,7 +127,7 @@ const showBBox = (canvas) => {
             fill: 'none',
             'stroke-width': 1,
             stroke: 'black',
-            'stroke-dasharray': '1 5',
+            'stroke-dasharray': '1 4',
         });
         canvas.appendChild(rect);
     }
