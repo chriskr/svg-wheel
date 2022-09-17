@@ -18,7 +18,7 @@ const range = function* (start, end, step) {
 };
 const WIDTH = 1000;
 const HEIGHT = 1000;
-const CIRCLE_RADIUS = 400;
+const CIRCLE_RADIUS = 350;
 const ICON_RADIUS = 10;
 // In percentage of CIRCLE_RADIUS
 const CONTROL_POINT = 0.1;
@@ -32,13 +32,12 @@ const ICON_CONFIG = {
 };
 const ICON_LABEL_CONFIG = {
     'font-size': 20,
-    x: '20',
     y: '0',
     dy: '5',
 };
 const PATH_CONFIG = {
     'stroke-width': 1,
-    stroke: 'hsla(0, 0%, 0%, .3)',
+    stroke: 'hsla(0, 0%, 0%, .7)',
     fill: 'none',
 };
 const getPoint = (index, count, radius) => [
@@ -57,13 +56,20 @@ const createPath = (startIndex, endIndex, count) => {
     });
 };
 const createIcon = (index, count, label) => {
+    const deg = ((index / count) * 360) % 360;
     const circle = createSVGElement('circle', {
         ...ICON_CONFIG,
     });
-    const text = createSVGElement('text', ICON_LABEL_CONFIG);
+    const isRotateLabel = deg > 90 && deg < 270;
+    const text = createSVGElement('text', {
+        ...ICON_LABEL_CONFIG,
+        'text-anchor': isRotateLabel ? 'end' : 'start',
+        x: isRotateLabel ? -20 : 20,
+        transform: isRotateLabel ? 'rotate(180)' : '',
+    });
     text.textContent = label;
     const g = createSVGElement('g', {
-        transform: `rotate(${(index / count) * 360}) translate(${CIRCLE_RADIUS}, 0)`,
+        transform: `rotate(${deg}) translate(${CIRCLE_RADIUS}, 0)`,
     });
     g.appendChild(circle);
     g.appendChild(text);
@@ -93,7 +99,7 @@ const createView = () => {
     canvas.appendChild(circle);
     const count = 51;
     for (const i of range(count)) {
-        const icon = createIcon(i, count, 'Hello');
+        const icon = createIcon(i, count, getRandomName());
         canvas.appendChild(icon);
     }
     for (const i of range(3, count, 3)) {
@@ -102,5 +108,225 @@ const createView = () => {
     }
     svg.appendChild(canvas);
     document.body.appendChild(svg);
+    showBBox(canvas);
+};
+const showBBox = (canvas) => {
+    {
+        const { x, y, width, height } = canvas.getBBox();
+        const rect = createSVGElement('rect', {
+            x,
+            y,
+            width,
+            height,
+            fill: 'none',
+            'stroke-width': 1,
+            stroke: 'black',
+            'stroke-dasharray': '1 5',
+        });
+        canvas.appendChild(rect);
+    }
 };
 window.onload = createView;
+const getRandomName = () => names[(Math.random() * names.length) | 0];
+const names = [
+    'Aaliyah',
+    'Aaron',
+    'Abigail',
+    'Addison',
+    'Adeline',
+    'Adrian',
+    'Aiden',
+    'Alexander',
+    'Alice',
+    'Allison',
+    'Amelia',
+    'Andrew',
+    'Angel',
+    'Anna',
+    'Anthony',
+    'Aria',
+    'Ariana',
+    'Asher',
+    'Athena',
+    'Aubrey',
+    'Audrey',
+    'Aurora',
+    'Austin',
+    'Autumn',
+    'Ava',
+    'Avery',
+    'Axel',
+    'Beau',
+    'Bella',
+    'Benjamin',
+    'Bennett',
+    'Brooklyn',
+    'Brooks',
+    'Caleb',
+    'Cameron',
+    'Camila',
+    'Caroline',
+    'Carson',
+    'Carter',
+    'Charles',
+    'Charlotte',
+    'Chloe',
+    'Christian',
+    'Christopher',
+    'Claire',
+    'Colton',
+    'Connor',
+    'Cooper',
+    'Cora',
+    'Daniel',
+    'David',
+    'Delilah',
+    'Dominic',
+    'Dylan',
+    'Easton',
+    'Eleanor',
+    'Elena',
+    'Eli',
+    'Eliana',
+    'Elias',
+    'Elijah',
+    'Elizabeth',
+    'Ella',
+    'Ellie',
+    'Emery',
+    'Emilia',
+    'Emily',
+    'Emma',
+    'Ethan',
+    'Eva',
+    'Evelyn',
+    'Everett',
+    'Everleigh',
+    'Everly',
+    'Ezekiel',
+    'Ezra',
+    'Gabriel',
+    'Gabriella',
+    'Genesis',
+    'Gianna',
+    'Grace',
+    'Grayson',
+    'Greyson',
+    'Hailey',
+    'Hannah',
+    'Harper',
+    'Hazel',
+    'Henry',
+    'Hudson',
+    'Hunter',
+    'Ian',
+    'Isaac',
+    'Isabella',
+    'Isaiah',
+    'Isla',
+    'Ivy',
+    'Jack',
+    'Jackson',
+    'Jacob',
+    'Jade',
+    'James',
+    'Jameson',
+    'Jaxon',
+    'Jayden',
+    'Jeremiah',
+    'John',
+    'Jonathan',
+    'Jordan',
+    'Jose',
+    'Joseph',
+    'Josephine',
+    'Joshua',
+    'Josiah',
+    'Julian',
+    'Kai',
+    'Kennedy',
+    'Kinsley',
+    'Landon',
+    'Layla',
+    'Leah',
+    'Leilani',
+    'Leo',
+    'Leonardo',
+    'Levi',
+    'Liam',
+    'Lillian',
+    'Lily',
+    'Lincoln',
+    'Logan',
+    'Luca',
+    'Lucas',
+    'Lucy',
+    'Luke',
+    'Luna',
+    'Lydia',
+    'Madeline',
+    'Madelyn',
+    'Madison',
+    'Mason',
+    'Mateo',
+    'Matthew',
+    'Maverick',
+    'Maya',
+    'Mia',
+    'Michael',
+    'Mila',
+    'Miles',
+    'Naomi',
+    'Natalia',
+    'Natalie',
+    'Nathan',
+    'Nevaeh',
+    'Nicholas',
+    'Noah',
+    'Nolan',
+    'Nora',
+    'Nova',
+    'Oliver',
+    'Olivia',
+    'Owen',
+    'Paisley',
+    'Parker',
+    'Penelope',
+    'Peyton',
+    'Piper',
+    'Quinn',
+    'Riley',
+    'Robert',
+    'Roman',
+    'Ruby',
+    'Ryan',
+    'Rylee',
+    'Sadie',
+    'Samuel',
+    'Santiago',
+    'Sarah',
+    'Savannah',
+    'Scarlett',
+    'Sebastian',
+    'Serenity',
+    'Silas',
+    'Skylar',
+    'Sofia',
+    'Sophia',
+    'Sophie',
+    'Stella',
+    'Theodore',
+    'Thomas',
+    'Valentina',
+    'Victoria',
+    'Violet',
+    'Waylon',
+    'Wesley',
+    'Weston',
+    'William',
+    'Willow',
+    'Wyatt',
+    'Xavier',
+    'Zoe',
+    'Zoey',
+];
