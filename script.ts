@@ -28,6 +28,7 @@ const CIRCLE_RADIUS = 350;
 const ICON_RADIUS = 10;
 // In percentage of CIRCLE_RADIUS
 const CONTROL_POINT = 0.1;
+const LABEL_OFFSET = 30;
 
 const ICON_CONFIG = {
   cx: 0,
@@ -35,13 +36,13 @@ const ICON_CONFIG = {
   r: ICON_RADIUS,
   'stroke-width': 1,
   stroke: 'black',
-  fill: 'hsla(210, 100%, 70%, .5)',
+  fill: 'hsl(210, 100%, 70%)',
 };
 
 const ICON_LABEL_CONFIG = {
   'font-size': 20,
   y: '0',
-  dy: '5',
+  dy: '6',
 };
 
 const PATH_CONFIG = {
@@ -64,12 +65,12 @@ const toPair = (point: [number, number]) =>
 
 const createPath = (startIndex: number, endIndex: number, count: number) => {
   const startPoint = getPoint(startIndex, count, CIRCLE_RADIUS - ICON_RADIUS);
-  const controlPoint1 = getPoint(
+  const startControlPoint = getPoint(
     startIndex,
     count,
     CIRCLE_RADIUS * CONTROL_POINT
   );
-  const controlPoint2 = getPoint(
+  const endControlPoint = getPoint(
     endIndex,
     count,
     CIRCLE_RADIUS * CONTROL_POINT
@@ -77,8 +78,8 @@ const createPath = (startIndex: number, endIndex: number, count: number) => {
   const endPoint = getPoint(endIndex, count, CIRCLE_RADIUS - ICON_RADIUS);
   return createSVGElement('path', {
     ...PATH_CONFIG,
-    d: `M ${toPair(startPoint)} C ${toPair(controlPoint1)} ${toPair(
-      controlPoint2
+    d: `M ${toPair(startPoint)} C ${toPair(startControlPoint)} ${toPair(
+      endControlPoint
     )} ${toPair(endPoint)}`,
   });
 };
@@ -92,8 +93,8 @@ const createIcon = (index: number, count: number, label: string) => {
   const text = createSVGElement('text', {
     ...ICON_LABEL_CONFIG,
     'text-anchor': isRotateLabel ? 'end' : 'start',
-    x: isRotateLabel ? -20 : 20,
-    transform: isRotateLabel ? 'rotate(180)' : '',
+    x: (isRotateLabel ? -1 : 1) * LABEL_OFFSET,
+    ...(isRotateLabel ? { transform: 'rotate(180)' } : {}),
   });
   text.textContent = label;
   const g = createSVGElement('g', {
@@ -112,7 +113,7 @@ const createView = () => {
     y: '0',
     width: `${WIDTH}`,
     height: `${HEIGHT}`,
-    fill: 'hsla(210, 100%, 70%, .3)',
+    fill: 'hsla(210, 100%, 70%, .25)',
   });
   svg.appendChild(rect);
 
@@ -126,7 +127,7 @@ const createView = () => {
     r: CIRCLE_RADIUS,
     'stroke-width': '1',
     stroke: 'black',
-    fill: 'none',
+    fill: 'hsla(210, 100%, 70%, .25)',
   });
   canvas.appendChild(circle);
 
