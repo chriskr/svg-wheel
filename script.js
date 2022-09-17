@@ -20,6 +20,8 @@ const WIDTH = 1000;
 const HEIGHT = 1000;
 const CIRCLE_RADIUS = 400;
 const ICON_RADIUS = 10;
+// In percentage of CIRCLE_RADIUS
+const CONTROL_POINT = 0.1;
 const ICON_CONFIG = {
     cx: 0,
     cy: 0,
@@ -44,10 +46,16 @@ const getPoint = (index, count, radius) => [
     Math.sin((index / count) * 2 * Math.PI) * radius,
 ];
 const toPair = (point) => point.map((n) => n.toFixed(2)).join(', ');
-const createPath = (startIndex, endIndex, count) => createSVGElement('path', {
-    ...PATH_CONFIG,
-    d: `M ${toPair(getPoint(startIndex, count, CIRCLE_RADIUS - ICON_RADIUS))} C ${toPair(getPoint(startIndex, count, CIRCLE_RADIUS * 0.3))} ${toPair(getPoint(endIndex, count, CIRCLE_RADIUS * 0.3))} ${toPair(getPoint(endIndex, count, CIRCLE_RADIUS - ICON_RADIUS))}`,
-});
+const createPath = (startIndex, endIndex, count) => {
+    const startPoint = getPoint(startIndex, count, CIRCLE_RADIUS - ICON_RADIUS);
+    const controlPoint1 = getPoint(startIndex, count, CIRCLE_RADIUS * CONTROL_POINT);
+    const controlPoint2 = getPoint(endIndex, count, CIRCLE_RADIUS * CONTROL_POINT);
+    const endPoint = getPoint(endIndex, count, CIRCLE_RADIUS - ICON_RADIUS);
+    return createSVGElement('path', {
+        ...PATH_CONFIG,
+        d: `M ${toPair(startPoint)} C ${toPair(controlPoint1)} ${toPair(controlPoint2)} ${toPair(endPoint)}`,
+    });
+};
 const createIcon = (index, count, label) => {
     const circle = createSVGElement('circle', {
         ...ICON_CONFIG,
@@ -89,10 +97,8 @@ const createView = () => {
         canvas.appendChild(icon);
     }
     for (const i of range(3, count, 3)) {
-        //for (const y of range(0, count - 1)) {
         const path = createPath(0, i, count);
         canvas.appendChild(path);
-        //}
     }
     svg.appendChild(canvas);
     document.body.appendChild(svg);

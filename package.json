@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "tsc": "tsc",
+    "watch": "tsc --watch",
+    "build": "tsc",
+    "serve": "python3 -m http.server"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.3"
+  }
+}
