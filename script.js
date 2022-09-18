@@ -21,13 +21,12 @@ const range = function* (start, end, step) {
         start += step;
     }
 };
-const WIDTH = 1000;
-const HEIGHT = 1000;
 const CIRCLE_RADIUS = 300;
 const ICON_RADIUS = 12;
 // In percentage of CIRCLE_RADIUS
 const CONTROL_POINT = 0.1;
-const LABEL_OFFSET = 25;
+const LABEL_OFFSET = 30;
+const SVG_PADDING = 30;
 const ICON_CONFIG = {
     cx: 0,
     cy: 0,
@@ -82,27 +81,8 @@ const createIcon = (index, count, label) => {
     return g;
 };
 const createView = () => {
-    const svg = createSVGElement('svg', { viewBox: `0 0 ${WIDTH} ${HEIGHT}` });
-    const rect = createSVGElement('rect', {
-        x: '0',
-        y: '0',
-        width: `${WIDTH}`,
-        height: `${HEIGHT}`,
-        fill: 'hsla(210, 100%, 70%, .25)',
-    });
-    svg.appendChild(rect);
-    const canvas = createSVGElement('g', {
-        transform: `translate(${WIDTH / 2}, ${HEIGHT / 2})`,
-    });
-    const circle = createSVGElement('circle', {
-        cx: '0',
-        cy: '0',
-        r: CIRCLE_RADIUS,
-        'stroke-width': '1',
-        stroke: 'black',
-        fill: 'hsla(210, 100%, 70%, .25)',
-    });
-    canvas.appendChild(circle);
+    const svg = createSVGElement('svg');
+    const canvas = createSVGElement('g');
     const count = 51;
     for (const i of range(count)) {
         const icon = createIcon(i, count, `${getRandomName()} ${getRandomName()}`);
@@ -114,22 +94,14 @@ const createView = () => {
     }
     svg.appendChild(canvas);
     document.body.appendChild(svg);
-    showBBox(canvas);
+    sizeToBBox(svg, canvas);
 };
-const showBBox = (canvas) => {
+const sizeToBBox = (svg, canvas) => {
     {
         const { x, y, width, height } = canvas.getBBox();
-        const rect = createSVGElement('rect', {
-            x,
-            y,
-            width,
-            height,
-            fill: 'none',
-            'stroke-width': 1,
-            stroke: 'black',
-            'stroke-dasharray': '1 4',
-        });
-        canvas.appendChild(rect);
+        svg.setAttribute('viewBox', `0 0 ${(width + 2 * SVG_PADDING).toFixed(2)} ${(height +
+            2 * SVG_PADDING).toFixed(2)}`);
+        canvas.setAttribute('transform', `translate(${(-x + SVG_PADDING).toFixed(2)}, ${(-y + SVG_PADDING).toFixed(2)})`);
     }
 };
 window.onload = createView;
