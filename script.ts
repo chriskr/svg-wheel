@@ -129,10 +129,10 @@ const createView = () => {
   }
   svg.appendChild(canvas);
   document.body.appendChild(svg);
-  sizeToBBox(svg, canvas as SVGSVGElement);
+  sizeToBBox(svg, canvas as SVGGraphicsElement);
 };
 
-const sizeToBBox = (svg: SVGElement, canvas: SVGSVGElement) => {
+const sizeToBBox = (svg: SVGElement, canvas: SVGGraphicsElement) => {
   {
     const { x, y, width, height } = canvas.getBBox();
     svg.setAttribute(
